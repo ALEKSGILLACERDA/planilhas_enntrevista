@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 
 np.random.seed(42)
-connetions = 1000
+
+num_users = 1000
 start_date = pd.to_datetime('2025-04-01')
 end_date = pd.to_datetime('2025-04-08')
 dates = pd.date_range(start=start_date, end=end_date)
@@ -16,19 +17,24 @@ games = [
 
 game_weights = [
     0.15, 0.12, 0.10, 0.08, 0.07, 0.06, 0.06, 0.05, 0.05,
-    0.05, 0.04, 0.04, 0.04, 0.04, 0.05,
+    0.05, 0.04, 0.04, 0.04, 0.04, 0.05
 ]
 
-user_ids = [np.random.randint(10**2, 10**9) for _ in range(connetions)]
-user_connetions = np.random.uniform(1, 40, size=connetions)
+# Gerar usuários únicos
+user_ids = [np.random.randint(10**2, 10**9) for _ in range(num_users)]
 
-table = [
-    (user_ids[i], pd.Timestamp(np.random.choice(dates)), np.random.choice(games, p=game_weights))
-    for i in range(connetions)
-    for _ in range(np.random.poisson(lam=user_connetions[i]))
+# Gerar valor médio de conexões para cada usuário
+user_connections = np.random.gamma(shape=2.0, scale=7.0, size=num_users)
+
+# Criar a tabela com list comprehension (sem zip)
+data = [
+    (user_ids[i], np.random.choice(dates), np.random.choice(games, p=game_weights))
+    for i in range(num_users)
+    for _ in range(np.random.poisson(user_connections[i]))
 ]
 
-df = pd.DataFrame(table, columns=['user_id', 'connection_date', 'app_name'])
+# Criar DataFrame
+df = pd.DataFrame(data, columns=['user_id', 'connection_date', 'app_name'])
 
-print(df.head())
-df.to_csv('base_conexoes_jogos_online_media_aleatoria.csv', index=False)
+# Salvar CSV
+df.to_csv('base_conexoes_distribuicao_realista.csv', index=False)
