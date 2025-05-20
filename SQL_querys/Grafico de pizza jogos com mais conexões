@@ -1,0 +1,14 @@
+SELECT
+  app_name,
+  COUNT(*) AS total_acessos
+FROM
+  access_network_behavior.user_behavior_vw
+WHERE
+  connection_date = '2025-04-01'
+	AND app_name != 'Discord'
+GROUP BY
+  app_name
+ORDER BY
+  total_acessos DESC
+LIMIT
+  15

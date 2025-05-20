@@ -1,0 +1,24 @@
+WITH user_conexoes AS (
+  SELECT
+    user_id,
+    COUNT(*) AS num_conexoes
+  FROM
+    access_network_behavior.user_behavior_vw
+  WHERE
+    connection_date = '2025-04-01'
+    AND app_name != 'Discord'
+  GROUP BY
+    user_id
+),
+estatisticas AS (
+  SELECT
+    avg(num_conexoes) AS media,
+    stddevPop(num_conexoes) AS desvio
+  FROM user_conexoes
+)
+SELECT
+  avg(num_conexoes) AS media_sem_outliers
+FROM
+  user_conexoes, estatisticas
+WHERE
+  num_conexoes BETWEEN media - 2 * desvio AND media + 2 * desvio;

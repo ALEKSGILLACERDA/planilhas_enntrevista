@@ -1,0 +1,10 @@
+SELECT
+  user_id, COUNT(user_id)
+FROM
+  access_network_behavior.user_behavior_vw
+WHERE
+  connection_date BETWEEN '2025-04-01' AND '2025-04-08'
+  AND app_name != 'Discord'
+GROUP BY
+  user_id
+ORDER by user_id ASC
